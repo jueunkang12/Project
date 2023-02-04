@@ -5,7 +5,7 @@ format: pdf
 date: 2 February 2023
 date-format: long
 abstract: "Laws and regulations are placed to reduce alcohol-impaired driving and it's serious consequences including fatalities. We explore whether the number of accidents involving alcohol consumption has been decreasing over the years from 2006 - 2021. In addition, we compare the fatal:non-fatal ratio of accidents involving and not involving alcohol consumption, to investigate whether impaired-driving causes higher rates of fatalities. We find that the number of accidents involving alcohol consumption has been declining, while the fatal:non-fatal ratio of accidents involving alcohol is higher than that of accidents not involving alcohol. In addition, we find that there is a consistent pattern of the number of accidents and fatal:non-fatal ratio increasing between 2020 - 2021, indicating an increase after the first year of COVID-19. This investigation and it's findings matter as we see the possibility of motor collisions both involving and not involving alcohol increasing. Furthermore, it suggests the need to continue exploring this space in order to reflect on other measures that can be put in place before accidents begin to increase."
-thanks: "Code and data available at: https://github.com/jueunkang12/Motor_Collisions"
+thanks: "Code and data available at: https://github.com/jueunkang12/Project"
 bibliography: bibliography.bib
 number-sections: true
 
