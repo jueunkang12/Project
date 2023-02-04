@@ -1,0 +1,169 @@
+---
+title: "Motor collision accidents involving alcohol consumption has higher rates of fatality"
+author: "Jueun Kang"
+format: pdf
+date: 2 February 2023
+date-format: long
+abstract: "Laws and regulations are placed to reduce alcohol-impaired driving and it's serious consequences including fatalities. We explore whether the number of accidents involving alcohol consumption has been decreasing over the years from 2006 - 2021. In addition, we compare the fatal:non-fatal ratio of accidents involving and not involving alcohol consumption, to investigate whether impaired-driving causes higher rates of fatalities. We find that the number of accidents involving alcohol consumption has been declining, while the fatal:non-fatal ratio of accidents involving alcohol is higher than that of accidents not involving alcohol. In addition, we find that there is a consistent pattern of the number of accidents and fatal:non-fatal ratio increasing between 2020 - 2021, indicating an increase after the first year of COVID-19. This investigation and it's findings matter as we see the possibility of motor collisions both involving and not involving alcohol increasing. Furthermore, it suggests the need to continue exploring this space in order to reflect on other measures that can be put in place before accidents begin to increase."
+thanks: "Code and data available at: https://github.com/jueunkang12/Project"
+bibliography: bibliography.bib
+number-sections: true
+
+execute: 
+  echo: false
+  warning: false
+  message: false
+
+---
+
+```{r}
+#### Preamble ####
+# Purpose: read in data from Motor Vehicle Collisions and make tables and graphs of the number of accidents and fatality rate.
+# Author: Jueun Kang
+# Email: jueun.kang@mail.utoronto.ca
+# Date: 29 January 2023
+# Prerequisites: Need to know where to get Motor Vehicle Collisions data.
+```
+
+```{r}
+#| echo: false
+
+library(tidyverse)
+library(janitor)
+library(opendatatoronto)
+library(lubridate)
+library(knitr)
+library(opendatatoronto)
+library(dplyr)
+
+
+# grabbing the raw data
+raw_data <-
+  read_csv(
+    "~/Documents/Project/Project_Folder/Inputs/data/raw_data.csv",
+    show_col_types = FALSE
+  )
+
+```
+
+# Introduction
+
+When a driver is impaired by alcohol, they are more likely to violate other rules of the road. This increases the risk of motor collisions, commonly causing major injuries as well as other serious consequences including fatalities [@law]. In Canada, impaired driving remains a leading criminal cause of death and injury, thus efforts to keep Canadians safe on the road continues to be a top priority by the Government of Canada [@gov]. In 1996, the Ontario government introduced an administrative driver’s license suspension law to prevent drunk driving [@cmaj]. In addition, reforms including authorizing mandatory alcohol screening at the roadside, increasing fines and penalties, and more have been put in place. The prohibited blood-alcohol concentration (BAC) in Canada is currently 80 milligrams or more (mg) of alcohol per 100 milliliters (ml) of blood [@law]. 
+
+The ‘Killed or Seriously Injured (KSI) Traffic Collisions’ dataset provided on the Public Safety Data Portal by the Toronto Police Service [@PSDP], contains a record of traffic collisions events where a person was either Killed or Serious Injured (KSI) from 2006 - 2021 in Toronto [@MVC]. This report will use this data to explore the amount of collision accidents which occur in relation to alcohol consumption, as well as the magnitude of injuries caused by alcohol-impaired driving. This investigation may provide insights on how effective laws and regulations have been towards preventing alcohol-impaired driving and its consequences over time in Toronto. 
+
+# Data
+
+## Data Source
+
+The data utilized in this report is provided by the Toronto Police Service on the Public Safety Data Portal [@PSDP]. The Service’s Open Data Program holds Police open data which includes any data collected or maintained by Toronto Police Service  [@PSDP]. However, as the Toronto Police Service is committed to protect privacy, legal, and confidential data, certain data that goes against this is not included. 
+
+## Data Collection 
+
+The dataset includes "all traffic collision events where a person was either Killed or Seriously Injured (KSI) from 2006 - 2021" in Toronto. Reports of Total Motor Vehicle Collisions by the Toronto Police Service are updated annually in the Annual Statistical Report Crime & Traffic Dashboard. The dataset has a total of 17488 entries of motor collisions, as well as 53 variables [@PSDP]. 
+
+It is important to note a limitation to this dataset; the occurrence location of criminal accidents were deliberately offset in order to protect the privacy of those involved in the accidents. Thus, the accuracy, completeness, and timelines of the data is not guaranteed by the Toronto Police Service, and should not be utilized to create comparisons with other crime data sources. While this shows that the numbers by Division and Neighbourhood may not correctly reflect the number of occurrences reported, this report does not focus on these variables as it looks at accidents in Toronto as a whole when investigating alcohol-related accidents and accident classification.
+
+## Data Analysis 
+
+This dataset was obtained from the Open Data Toronto portal [@citeODT], and accessed through R [@citeR] using the opendatatoronto package [@citeODT]. Other R packages including "tidyverse" [@tidyverse], "janitor" [@janitor], "dplyr" [@dplyr], "knitr" [@knitr] and "tidyr" [@tidyr] were used to clean, tidy, and analyse the relevant and necessary data. 
+
+The main variables of interest for this report are: year, alcohol, and acclass. In reference to the data field descriptions provided by Toronto Police Service, 'year' refers to the year at which the collision occurred, 'alcohol' refers to alcohol-related collisions, and ‘acclass’ refers to the classification of accident [@PSDP]. 
+
+\newpage
+
+```{r}
+#| echo: false
+#| label: tbl-1
+#| tbl-cap: "No. of accidents caused by alcohol consumption from 2006-2021"
+
+clean_alcohol_data <-
+  read_csv(
+    "~/Documents/Project/Project_Folder/Inputs/data/clean_alcohol_data.csv",
+    show_col_types = FALSE
+  )
+
+knitr::kable(
+  clean_alcohol_data, 
+  col.names = c("Year", "Collisions with Alcohol")
+)
+
+```
+
+First, I investigated the number of collisions which occurred where alcohol consumption played a role in the accident using **kable** [@knitr]. I took the raw data and and selected 'year' and 'alcohol', and combined the data by grouping by year using **group_by** [@dplyr] and counting all accidents including alcohol consumption by filtering through **filter** [@dplyr] and using **count** [@dplyr]. @tbl-1 holds two variables: variable “Year” presents the year from 2006 - 2021, while variable “collisions with alcohol consumption” shows the total number of collisions where alcohol consumption was involved. In order to visualize this data, I created a graph using **gglot2** [@ggplot2] as shown in @fig-1 below. 
+
+\newpage
+
+```{r}
+#| echo: false
+#| label: fig-1
+#| fig-cap: "Number of accidents involving alcohol consumption from 2006-2021"
+
+library(ggplot2)
+ggplot(clean_alcohol_data, aes(x=Year, y=Number_of_accidents)) +
+  geom_col(fill="#abd7eb") +
+  labs(x="Year", y="Number of Accidents", title="Number of accidents involving alcohol consumption") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(panel.background = element_blank()) +
+  scale_x_continuous(breaks = clean_alcohol_data$Year)
+
+```
+
+@fig-1 shows an overall descending pattern of the number of accidents involving alcohol consumption over time, from 2006-2021. In 2006, there was a total of 95 collisions involving alcohol consumption, while there were only 23 collisions in 2021. This may suggest that restrictions and laws being placed to prevent alcohol-impaired driving has been effective in Toronto. It is also interesting to note that the year with the lowest number of accidents with alcohol consumption was 2020. It is possible that the period of COVID-19 played a large role in this, as social activities including drinking was less common, while isolating measures were more common. Furthermore, it is important to point out that the number of accidents involving alcohol consumption increases from 2020 to 2021. This indicates the possibility that with more people moving around with looser COVID-19 restrictions, the number of accidents is beginning to increase. However, there is not enough data to conclude this, meaning more data points would first need to be found over the following years.
+
+\newpage
+
+```{r}
+#| echo: false
+#| label: tbl-2
+#| tbl-cap: "Comparison of accidents with and without involving alcohol consumption from 2006-2021"
+  
+accident_alc_comparison <-
+  read_csv(
+    "~/Documents/Project/Project_Folder/Inputs/data/accident_alc_comparison.csv",
+    show_col_types = FALSE
+    )
+
+knitr::kable(
+  accident_alc_comparison, caption = "Comparison of accidents with and without alcohol consumption")
+
+```
+Now that we know the number of accidents involving alcohol consumption has been declining over 2006 - 2021, I wanted to compare this to the accidents that have occurred which do not involve alcohol consumption. In order to do this, I decided to organise the total number of accidents involving and not involving alcohol consumption, per year from 2006 - 2021, as seen in @tbl-2. In addition, I used the variable 'acclass' from the raw data, which classifies the accident by non-fatal and fatal accidents [@PSDP]. @tbl-2 holds seven variables: 'Year' presents years from 2006 - 2021, 'Nonfatal' presents the number of non-fatal accidents without including alcohol-involving accidents, 'Fatal' presents the number of fatal accidents without including alcohol-involving accidents, and 'Total' adds up non-fatal and fatal accidents. 'AlcNonfatal' presents the number of non-fatal alcohol-involving accidents, 'AlcFatal' presents the number of fatal alcohol-involving accidents, and AlcTotal adds up 'AlcNonfatal' and 'AlcFatal' to find the total number of accidents involving alcohol consumption.
+
+Overall, the total number of accidents without alcohol consumption is higher than the total number of accidents involving alcohol consumption. This makes sense because there are many other factors that may contribute to motor collisions other than alcohol-impairement. From here, I wanted to investigate whether alcohol consumption leads to more fatal accidents in comparison to no alcohol consumption. This was done by using the data in @tbl-2, and is visually represented through @fig-2 below.
+
+\newpage
+
+
+```{r}
+#| echo: false
+#| label: fig-2
+#| fig-cap: "Comparison of fatal:non-fatal accidents with and without alcohol"
+
+#plot comparing fatal accidents with and without alcohol consumption
+ggplot(accident_alc_comparison, aes(x=Year)) + 
+  geom_line(aes(y = Fatal/Nonfatal, x=Year, color = "No Alcohol"), size=1) + 
+  geom_line(aes(y = AlcFatal/AlcNonfatal, x=Year, color="With Alcohol"), size=1) +
+  labs(x="Year", y="Fatal:Nonfatal", title="Comparison of fatal:non-fatal accidents with and without alcohol") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  theme(panel.background = element_blank()) +
+  scale_x_continuous(breaks = accident_alc_comparison$Year) +
+  scale_color_manual(name = "Legend", values = c("No Alcohol" = "darkred", "With Alcohol" = "steelblue"))
+  
+
+```
+@fig-2 provides a comparison of the number of fatal:non-fatal accidents involving and not involving alcohol consumption, using **ggplot** [@ggplot]. The ratio on the y-axis is created by dividing the number of fatal accidents by the number of non-fatal accidents - for both cases involving and not involving alcohol. Some observations that can be made is that the fatal:nonfatal ratio for accidents involving alcohol is generally higher than that for accidents not involving alcohol. 
+
+When looking at accidents with alcohol, we see peaks where the ratio is close to 1 - for example, in year 2011, the ratio is around 0.8. This means that for every one non-fatal accident involving alcohol, there is close to one fatal accident; close to one out of every two people in a collision accident die. In contrast, the without alcohol line is more consistent in comparison, with less peaks, where the ratio of fatal:non-fatal is closer to 0. For example, the trough in 2012 shows a fatal:non-fatal ratio close to 0.1; this means one out of every 10-11 people die. 
+
+It is also interesting to note that there is an incline for ratio of fatal:non-fatal accidents involving and not involving alcohol from 2020 to 2021. This may once again be due to the fact that after the first year of COVID-19, as well as the loosening of laws and regulations regarding the pandemic, people have been going out more - for socializing, travelling on the road, and more.
+
+# Conclusion
+
+In conclusion, this paper has explored the space of motor collision accidents, specifically around the impact of alcohol-impaired driving, from 2006 to 2021. Through @tbl-1 and @fig-1, I found that the number of accidents involving alcohol consumption has a declining pattern over the years, reflecting positively on laws implemented by the Government of Canada to prevent impaired-driving. Then, I looked at the accidents from whether they were classified as fatal or non-fatal, for both scenarios of accidents involving and not involving alcohol, as organised in @tbl-2. This was visualized in @fig-2, which demonstrated more inconsistent fatal:non-fatal ratios across 2006-2021 for accidents involving alcohol consumption, and more consistent fatal:non-fatal ratios for accidents not involving alcohol consumption. Overall, accidents not involving alcohol have a fatal:non-fatal ratio closer to 0, highlighting the importance of implementing measures to reduce alcohol-impaired driving. 
+
+Furthermore, a common theme across this investigation is that the number of accidents and fatal:non-fatal ratios increase across all @tbl-2, @fig-1, @tbl-2, and @fig-2 from 2020 - 2021. While it is possible that COVID-19 has played a role in this pattern, more data would need to be collected in the following years to confirm this observation. In addition, this incline from 2020 - 2021 indicates that there is potential for this trend to continue increasing. This provides valuable insight and suggests that this investigation should be further explored to ensure that the number of accidents and fatal:non-fatal ratio of accidents do not continue to increase. 
+
+\newpage
+
+# References
